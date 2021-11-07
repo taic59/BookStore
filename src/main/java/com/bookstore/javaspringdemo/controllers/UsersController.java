@@ -1,4 +1,5 @@
 package com.bookstore.javaspringdemo.controllers;
+import com.bookstore.javaspringdemo.models.Books;
 import com.bookstore.javaspringdemo.models.User;
 import com.bookstore.javaspringdemo.repositories.UserRepository;
 import com.bookstore.javaspringdemo.responses.UserResponse;
@@ -45,7 +46,7 @@ public class UsersController {
 			map.put("name", test.getName());
 			map.put("surname", test.getSurname());
 			map.put("date_of_birth", test.getDate_of_birth());
-			map.put("books", test.getBooks());
+			map.put("books", test.getOrders());
 			return ResponseEntity.ok().body(new UserResponse("200 OK", map));
 		} catch (Exception e) {
 			return ResponseEntity.badRequest().body(new UserResponse("500 Error", e));
@@ -98,7 +99,7 @@ public class UsersController {
 			User test = userRepository.findByUsername(authentication.getName()).get();
 			Double totalPrice = 0.0;
 			Integer[] orders = request.getOrders();
-			test.setBooks(orders);
+			test.setOrders(orders);
 			userRepository.save(test);
 	
 			RestTemplate restTemplate = new RestTemplate();
@@ -107,10 +108,14 @@ public class UsersController {
 			ResponseEntity<Object[]> responseEntity = restTemplate.getForEntity(BASE_URL, Object[].class);
 			List<Object> bookData = Arrays.asList(responseEntity.getBody());
 			for (int i = 0; i < orders.length; i++) {     
-				String jsonString = gson.toJson(bookData.get(orders[i]));
-				JsonObject data = new Gson().fromJson(jsonString, JsonObject.class);
-				Double price = data.get("price").getAsDouble();
-				totalPrice += price;
+				try {
+					String jsonString = gson.toJson(bookData.get(orders[i]-1));
+					JsonObject data = new Gson().fromJson(jsonString, JsonObject.class);
+					Double price = data.get("price").getAsDouble();
+					totalPrice += price;
+				} catch (Exception e) {
+					return ResponseEntity.badRequest().body(new UserResponse("400 Error", "Please select a valid order."));
+				}
 			}
 			Map<String, Double> result  = new HashMap<String, Double>();
 			result.put("price", totalPrice);

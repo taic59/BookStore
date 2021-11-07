@@ -20,14 +20,13 @@ public class User implements UserDetails{
 	private String surname;
 	@Column(name = "date_of_birth", nullable = false)
     private String date_of_birth;
-	private Integer[] books;
 	private Integer[] orders;
 	
 	public User() {
 		super();
 	}
     
-    public User(Integer id, String username, String password, String name, String surname, String date_of_birth, Integer[] books,Integer[] orders) {
+    public User(Integer id, String username, String password, String name, String surname, String date_of_birth,Integer[] orders) {
 		super();
 		this.id = id;
 		this.username = username;
@@ -35,7 +34,6 @@ public class User implements UserDetails{
 		this.name = name;
 		this.surname = surname;
 		this.date_of_birth = date_of_birth;
-		this.books = books;
 		this.orders = orders;
 	}
 	
@@ -78,12 +76,6 @@ public class User implements UserDetails{
 	public void setDate_of_birth(String date_of_birth) {
 		this.date_of_birth = date_of_birth;
 	}
-	public Integer[] getBooks() {
-		return books;
-	}
-	public void setBooks(Integer[] books) {
-		this.books = books;
-	}
 	public Integer[] getOrders() {
 		return orders;
 	}
@@ -109,7 +101,7 @@ public class User implements UserDetails{
                 "username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", date_of_birth='" + date_of_birth + '\'' +
-                ", books=" + books +
+                ", books=" + orders +
                 '}';
 	}
 	
