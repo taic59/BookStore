@@ -1,5 +1,4 @@
 package com.bookstore.javaspringdemo.controllers;
-import com.bookstore.javaspringdemo.models.Books;
 import com.bookstore.javaspringdemo.models.User;
 import com.bookstore.javaspringdemo.repositories.UserRepository;
 import com.bookstore.javaspringdemo.responses.UserResponse;
@@ -13,11 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,8 +31,6 @@ public class UsersController {
 	private UserService userService;
 	@Autowired
 	private UserRepository userRepository;
-	@Autowired
-	private PasswordEncoder passwordEncoder;
 
     @GetMapping("users")
 	public ResponseEntity<UserResponse> getUserDetail(Authentication authentication) {
@@ -72,9 +66,7 @@ public class UsersController {
 				return ResponseEntity.badRequest().body(new UserResponse("400 Error", "Username format: name.surname"));
 			}
 			request.setName(name);
-			request.setSurname(surname);
-			// request.setPassword(passwordEncoder.encode(request.getPassword()));
-			
+			request.setSurname(surname);			
 			userRepository.save(request);
 			return ResponseEntity.ok().body(new UserResponse("200 OK", null));
 		} catch (Exception e) {
